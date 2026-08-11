@@ -1,4 +1,5 @@
 from tracker import GradeTracker
+from datetime import datetime
 
 
 def display_menu():
@@ -18,8 +19,21 @@ def display_menu():
 def get_assignment_details():
     """Collect and validate assignment information."""
 
-    subject = input("Enter subject: ").strip()
-    title = input("Enter assignment title: ").strip()
+    while True:
+        subject = input("Enter subject: ").strip()
+
+        if subject:
+            break
+
+        print("Subject cannot be empty.")
+
+    while True:
+        title = input("Enter assignment title: ").strip()
+
+        if title:
+            break
+
+        print("Assignment title cannot be empty.")
 
     while True:
         try:
@@ -39,9 +53,17 @@ def get_assignment_details():
                 break
 
         except ValueError:
-            print("Invalid input. Please enter numbers for score and maximum score.")
+            print("Invalid input. Please enter numbers for the scores.")
 
-    due_date = input("Enter due date (YYYY-MM-DD): ").strip()
+    while True:
+        due_date = input("Enter due date (YYYY-MM-DD): ").strip()
+
+        try:
+            datetime.strptime(due_date, "%Y-%m-%d")
+            break
+
+        except ValueError:
+            print("Invalid date. Please use the format YYYY-MM-DD.")
 
     return subject, title, score, max_score, due_date
 
@@ -122,6 +144,10 @@ def filter_assignments(tracker):
 
         subject = input("Enter subject: ").strip()
 
+        if not subject:
+            print("Subject cannot be empty.")
+            return
+
         results = tracker.filter_by_subject(subject)
 
     elif choice == "2":
@@ -130,11 +156,21 @@ def filter_assignments(tracker):
             "Enter assignment type (Homework/Exam): "
         ).strip()
 
+        if assignment_type.lower() not in ["homework", "exam"]:
+            print("Invalid type. Please enter Homework or Exam.")
+            return
+
         results = tracker.filter_by_type(assignment_type)
 
     elif choice == "3":
 
         month = input("Enter month (YYYY-MM): ").strip()
+
+        try:
+            datetime.strptime(month, "%Y-%m")
+        except ValueError:
+            print("Invalid month. Please use the format YYYY-MM.")
+            return
 
         results = tracker.filter_by_month(month)
 
